@@ -1,4 +1,5 @@
 *.swp
+doxygen/
 bld/
 build/
 *.DS_Store
