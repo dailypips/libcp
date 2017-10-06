@@ -29,7 +29,7 @@
 #include <stddef.h>
 #include <assert.h>
 #define LIST_IMPLEMENTATION
-#include "list.h"
+#include "cp_list.h"
 
 #define next list_next
 #define prev list_prev

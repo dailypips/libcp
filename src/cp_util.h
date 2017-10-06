@@ -28,10 +28,10 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 
-#include "list.h"
-#include "hash.h"
-#include "cpluff.h"
-#include "defines.h"
+#include "cp_list.h"
+#include "cp_hash.h"
+#include "cp.h"
+#include "cp_nls.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -18,19 +18,19 @@ set(UX_CORE_HEADER
 )
 
 set(UX_CORE_SRC
-        context.c
-        cpluff.c
-        hash.c
-        list.c
-        logging.c
-        pdescriptor.c
-        pinfo.c
-        ploader.c
-        pcontrol.c
-        pscan.c
-        psymbol.c
-        serial.c
-        util.c
+        cp.c
+        cp_context.c
+        cp_hash.c
+        cp_list.c
+        cp_logging.c
+        cp_descriptor.c
+        cp_info.c
+        cp_loader.c
+        cp_control.c
+        cp_scan.c
+        cp_symbol.c
+        cp_serial.c
+        cp_util.c
 )
 
 if(WIN32)

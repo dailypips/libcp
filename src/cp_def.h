@@ -30,43 +30,6 @@
 #ifndef CPLUFFDEF_H_
 #define CPLUFFDEF_H_
 
-
-/* ------------------------------------------------------------------------
- * Version information
- * ----------------------------------------------------------------------*/
-
-/**
- * @defgroup versionInfo Version information
- * @ingroup cDefines cxxDefines
- *
- * C-Pluff version information. Notice that this version information
- * is static version information included in header files. The
- * macros introduced here can be used for compile time checks.
- */
-/*@{*/
-
-/**
- * The C-Pluff release version string. This string identifies a specific
- * version of the C-Pluff distribution. Compile time software compatibility
- * checks should use #CP_VERSION_MAJOR and #CP_VERSION_MINOR instead.
- */
-//#define CP_VERSION "@PACKAGE_VERSION@"
-
-/**
- * The major version number component of the release version. This is an
- * integer.
- */
-//#define CP_VERSION_MAJOR @CP_VERSION_MAJOR@
-
-/**
- * The minor version number component of the release version. This is an
- * integer.
- */
-//#define CP_VERSION_MINOR @CP_VERSION_MINOR@
-
-/*@}*/
-
-
 /* ------------------------------------------------------------------------
  * Symbol visibility
  * ----------------------------------------------------------------------*/
@@ -196,9 +159,5 @@
 #endif
 
 /*@}*/
-
-//#if @DEFINE_EMPTY_CONST@
-//#define const
-//#endif
 
 #endif /*CPLUFFDEF_H_*/

@@ -37,13 +37,13 @@
 #ifdef DLOPEN_LIBTOOL
 #include <ltdl.h>
 #endif
-#include "cpluff.h"
-#include "defines.h"
-#include "util.h"
+#include "cp.h"
+#include "cp_nls.h"
+#include "cp_util.h"
 #ifdef CP_THREADS
-#include "thread.h"
+#include "cp_thread.h"
 #endif
-#include "internal.h"
+#include "cp_internal.h"
 
 
 /* ------------------------------------------------------------------------

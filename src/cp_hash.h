@@ -27,7 +27,7 @@
 #ifndef HASH_H
 #define HASH_H
 
-#include "cpluffdef.h"
+#include "cp_def.h"
 
 #include <limits.h>
 #ifdef KAZLIB_SIDEEFFECT_DEBUG

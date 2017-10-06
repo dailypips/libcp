@@ -31,10 +31,10 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "cpluff.h"
-#include "defines.h"
-#include "util.h"
-#include "internal.h"
+#include "cp.h"
+#include "cp_nls.h"
+#include "cp_util.h"
+#include "cp_internal.h"
 
 
 /* ------------------------------------------------------------------------

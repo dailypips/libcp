@@ -28,8 +28,8 @@
 #ifndef SHARED_H_
 #define SHARED_H_
 
-#include "cpluff.h"
-#include "defines.h"
+#include "cp.h"
+#include "cp_nls.h"
 
 #ifdef __cplusplus
 extern "C" {

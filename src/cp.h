@@ -38,7 +38,7 @@
  * Preprocessor defines.
  */
  
-#include "cpluffdef.h"
+#include "cp_def.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -130,7 +130,7 @@ extern "C" {
  * or some specific kind of error. Some functions do not return a status
  * code because they never fail.
  */
-enum cp_status_t {
+enum cp_status_s {
 
 	/**
 	 * Operation was performed successfully (equals to zero).
@@ -172,7 +172,7 @@ enum cp_status_t {
  * @sa cp_plugin_listener_t
  * @sa cp_get_plugin_state
  */
-enum cp_plugin_state_t {
+enum cp_plugin_state_s {
 
 	/**
 	 * Plug-in is not installed. No plug-in information has been
@@ -238,7 +238,7 @@ enum cp_plugin_state_t {
  * @ref cp_logger_func_t "logger function" and when
  * @ref cp_register_logger "registering" a logger function.
  */
-enum cp_log_severity_t {
+enum cp_log_severity_s {
 
 	/** Used for detailed debug messages */
 	CP_LOG_DEBUG,
@@ -278,7 +278,7 @@ enum cp_log_severity_t {
  * plug-in contexts using ::cp_create_context and plug-ins receive their
  * plug-in contexts via @ref cp_plugin_runtime_t::create.
  */
-typedef struct cp_context_t cp_context_t;
+typedef struct cp_context_s cp_context_t;
 
 /*@}*/
 
@@ -290,34 +290,34 @@ typedef struct cp_context_t cp_context_t;
 /*@{*/
 
 /** A type for cp_plugin_info_t structure. */
-typedef struct cp_plugin_info_t cp_plugin_info_t;
+typedef struct cp_plugin_info_s cp_plugin_info_t;
 
 /** A type for cp_plugin_import_t structure. */
-typedef struct cp_plugin_import_t cp_plugin_import_t;
+typedef struct cp_plugin_import_s cp_plugin_import_t;
 
 /** A type for cp_ext_point_t structure. */
-typedef struct cp_ext_point_t cp_ext_point_t;
+typedef struct cp_ext_point_s cp_ext_point_t;
 
 /** A type for cp_extension_t structure. */
-typedef struct cp_extension_t cp_extension_t;
+typedef struct cp_extension_s cp_extension_t;
 
 /** A type for cp_cfg_element_t structure. */
-typedef struct cp_cfg_element_t cp_cfg_element_t;
+typedef struct cp_cfg_element_s cp_cfg_element_t;
 
 /** A type for cp_plugin_runtime_t structure. */
-typedef struct cp_plugin_runtime_t cp_plugin_runtime_t;
+typedef struct cp_plugin_runtime_s cp_plugin_runtime_t;
 
 /** A type for cp_plugin_loader_t structure. */
-typedef struct cp_plugin_loader_t cp_plugin_loader_t;
+typedef struct cp_plugin_loader_s cp_plugin_loader_t;
 
 /** A type for cp_status_t enumeration. */
-typedef enum cp_status_t cp_status_t;
+typedef enum cp_status_s cp_status_t;
 
 /** A type for cp_plugin_state_t enumeration. */
-typedef enum cp_plugin_state_t cp_plugin_state_t;
+typedef enum cp_plugin_state_s cp_plugin_state_t;
 
 /** A type for cp_log_severity_t enumeration. */
-typedef enum cp_log_severity_t cp_log_severity_t;
+typedef enum cp_log_severity_s cp_log_severity_t;
 
 /*@}*/
 
@@ -396,7 +396,7 @@ typedef int (*cp_run_func_t)(void *plugin_data);
  * be obtained using ::cp_get_plugin_info and ::cp_get_plugins_info. This
  * structure corresponds to the @a plugin element in a plug-in descriptor.
  */
-struct cp_plugin_info_t {
+struct cp_plugin_info_s {
 	
 	/**
 	 * The obligatory unique identifier of the plugin. A recommended way
@@ -530,7 +530,7 @@ struct cp_plugin_info_t {
  * Information about plug-in import. Plug-in import structures are
  * contained in @ref cp_plugin_info_t::imports.
  */
-struct cp_plugin_import_t {
+struct cp_plugin_import_s {
 	
 	/**
 	 * The identifier of the imported plug-in. This corresponds to the
@@ -566,7 +566,7 @@ struct cp_plugin_import_t {
  * point. Extension point structures are contained in
  * @ref cp_plugin_info_t::ext_points.
  */
-struct cp_ext_point_t {
+struct cp_ext_point_s {
 
 	/**
 	 * A pointer to plug-in information containing this extension point.
@@ -611,7 +611,7 @@ struct cp_ext_point_t {
  * Extension structure captures information about an extension. Extension
  * structures are contained in @ref cp_plugin_info_t::extensions.
  */
-struct cp_extension_t {
+struct cp_extension_s {
 
 	/** 
 	 * A pointer to plug-in information containing this extension.
@@ -667,7 +667,7 @@ struct cp_extension_t {
  * stored at @ref cp_extension_t::configuration and others are contained as
  * @ref cp_cfg_element_t::children "children" of parent elements.
  */
-struct cp_cfg_element_t {
+struct cp_cfg_element_s {
 	
 	/**
 	 * The name of the configuration element. This corresponds to the name of
@@ -734,7 +734,7 @@ struct cp_cfg_element_t {
  * }
  * @enddot
  */
-struct cp_plugin_runtime_t {
+struct cp_plugin_runtime_s {
 
 	/**
 	 * An initialization function called to create a new plug-in
@@ -836,7 +836,7 @@ struct cp_plugin_runtime_t {
  * However, applications may provide custom plug-in loaders, for example to
  * load plug-ins from remote plug-in collections.
  */
-struct cp_plugin_loader_t {
+struct cp_plugin_loader_s {
 
 	/**
 	 * An opaque data pointer for this plug-in loader instance. This data

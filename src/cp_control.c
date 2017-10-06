@@ -34,12 +34,12 @@
 #include <assert.h>
 #include <string.h>
 #include <stddef.h>
-#include "list.h"
-#include "hash.h"
-#include "cpluff.h"
-#include "defines.h"
-#include "util.h"
-#include "internal.h"
+#include "cp_list.h"
+#include "cp_hash.h"
+#include "cp.h"
+#include "cp_nls.h"
+#include "cp_util.h"
+#include "cp_internal.h"
 
 
 /* ------------------------------------------------------------------------

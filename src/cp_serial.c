@@ -31,8 +31,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "cpluff.h"
-#include "internal.h"
+#include "cp.h"
+#include "cp_internal.h"
 
 
 /* ------------------------------------------------------------------------

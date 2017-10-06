@@ -29,7 +29,8 @@
 #define THREAD_H_
 #ifdef CP_THREADS
 
-#include "defines.h"
+#include "cp_nls.h"
+#include "cp.h"
 
 #ifdef __cplusplus
 extern "C" {

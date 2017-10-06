@@ -34,10 +34,10 @@
 #include <string.h>
 #include <limits.h>
 #include <assert.h>
-#include "list.h"
-#include "cpluff.h"
-#include "defines.h"
-#include "util.h"
+#include "cp_list.h"
+#include "cp.h"
+#include "cp_nls.h"
+#include "cp_util.h"
 
 
 /* ------------------------------------------------------------------------

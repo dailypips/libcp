@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <string.h>
 #define HASH_IMPLEMENTATION
-#include "hash.h"
+#include "cp_hash.h"
 
 #ifdef KAZLIB_RCSID
 static const char rcsid[] = "$Id: hash.c,v 1.36.2.11 2000/11/13 01:36:45 kaz Exp $";

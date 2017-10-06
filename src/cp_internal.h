@@ -33,20 +33,20 @@
  * Inclusions
  * ----------------------------------------------------------------------*/
 
-#include "defines.h"
+#include "cp_nls.h"
 #include <assert.h>
 #if defined(DLOPEN_POSIX)
 #include <dlfcn.h>
 #elif defined(DLOPEN_LIBTOOL)
 #include <ltdl.h>
 #endif
-#include "list.h"
-#include "hash.h"
-#include "cpluff.h"
+#include "cp_list.h"
+#include "cp_hash.h"
+#include "cp.h"
 #ifdef CP_THREADS
-#include "thread.h"
+#include "cp_thread.h"
 #endif
-#include "shared.h"
+#include "cp_shared.h"
 
 
 #ifdef __cplusplus
@@ -112,11 +112,11 @@ extern "C" {
  * Data types
  * ----------------------------------------------------------------------*/
 
-typedef struct cp_plugin_t cp_plugin_t;
-typedef struct cp_plugin_env_t cp_plugin_env_t;
+typedef struct cp_plugin_s cp_plugin_t;
+typedef struct cp_plugin_env_s cp_plugin_env_t;
 
 // Plug-in context
-struct cp_context_t {
+struct cp_context_s {
 	
 	/// The associated plug-in instance or NULL for the main program
 	cp_plugin_t *plugin;
@@ -133,7 +133,7 @@ struct cp_context_t {
 };
 
 // Plug-in environment
-struct cp_plugin_env_t {
+struct cp_plugin_env_s {
 
 #if defined(CP_THREADS)
 
@@ -211,7 +211,7 @@ struct cp_plugin_env_t {
 };
 
 // Plug-in instance
-struct cp_plugin_t {
+struct cp_plugin_s {
 	
 	/// The enclosing context or NULL if none exists
 	cp_context_t *context;
@@ -258,10 +258,10 @@ struct cp_plugin_t {
  */
 typedef void (*cpi_dealloc_func_t)(cp_context_t *ctx, void *resource);
 
-typedef struct cpi_plugin_event_t cpi_plugin_event_t;
+typedef struct cpi_plugin_event_s cpi_plugin_event_t;
 
 /// Plug-in event information
-struct cpi_plugin_event_t {
+struct cpi_plugin_event_s {
 	
 	/// The affect plug-in
 	const char *plugin_id;

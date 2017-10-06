@@ -34,13 +34,13 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <string.h>
-#include "list.h"
-#include "cpluff.h"
-#include "util.h"
+#include "cp_list.h"
+#include "cp.h"
+#include "cp_util.h"
 #ifdef CP_THREADS
-#include "thread.h"
+#include "cp_thread.h"
 #endif
-#include "internal.h"
+#include "cp_internal.h"
 
 
 /* ------------------------------------------------------------------------
