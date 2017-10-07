@@ -58,7 +58,7 @@ static list_t *local_ploaders = NULL;
 
 static cp_plugin_info_t **lpl_scan_plugins(void *data, cp_context_t *ctx);
 
-CP_C_API cp_plugin_loader_t *cp_create_local_ploader(cp_status_t *error) {
+CP_C_API cp_plugin_loader_t *cp_create_local_loader(cp_status_t *error) {
 	cp_plugin_loader_t *loader = NULL;
 	cp_status_t status = CP_OK;
 	
@@ -105,7 +105,7 @@ CP_C_API cp_plugin_loader_t *cp_create_local_ploader(cp_status_t *error) {
 	// Release resources on failure
 	if (status != CP_OK) {
 		if (loader != NULL) {
-			cp_destroy_local_ploader(loader);
+			cp_destroy_local_loader(loader);
 		}
 		loader = NULL;
 	}
@@ -119,7 +119,7 @@ CP_C_API cp_plugin_loader_t *cp_create_local_ploader(cp_status_t *error) {
 	return loader;	
 }
 
-CP_C_API void cp_destroy_local_ploader(cp_plugin_loader_t *loader) {
+CP_C_API void cp_destroy_local_loader(cp_plugin_loader_t *loader) {
 	list_t *dirs;
 	
 	CHECK_NOT_NULL(loader);

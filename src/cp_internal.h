@@ -46,13 +46,26 @@
 #ifdef CP_THREADS
 #include "cp_thread.h"
 #endif
-#include "cp_shared.h"
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif //__cplusplus
 
+/* ------------------------------------------------------------------------
+ * Function declarations
+ * ----------------------------------------------------------------------*/
+
+/**
+ * Reports a fatal error. This method does not return.
+ *
+ * @param msg the formatted error message
+ * @param ... parameters
+ *
+ * @internal
+ * This method is exported for use by the C++ interface.
+ */
+CP_C_API void cpi_fatalf(const char *msg, ...) CP_GCC_NORETURN CP_GCC_PRINTF(1, 2) CP_GCC_NONNULL(1);
 
 /* ------------------------------------------------------------------------
  * Constants

@@ -72,7 +72,7 @@ static void free_plugin_env(cp_plugin_env_t *env) {
 		env->loggers = NULL;
 	}
 	if (env->local_loader != NULL) {
-		cp_destroy_local_ploader(env->local_loader);
+		cp_destroy_local_loader(env->local_loader);
 		env->local_loader = NULL;
 	}
 	if (env->loaders_to_plugins != NULL) {
@@ -306,11 +306,11 @@ CP_C_API void cp_destroy_context(cp_context_t *context) {
 	cp_uninstall_plugins(context);
 	
 	// Unregister all plug-in loaders
-	cp_unregister_ploaders(context);
+	cp_unregister_loaders(context);
 	
 	// Unregister implicit local plug-in loader, if any
 	if (context->env->local_loader != NULL) {
-		cp_unregister_ploader(context, context->env->local_loader);
+		cp_unregister_loader(context, context->env->local_loader);
 	}
 
 	// Release remaining information objects
@@ -350,14 +350,14 @@ static cp_status_t init_local_ploader(cp_context_t *context) {
 	
 	// Create new local plug-in loader, if one does not exist
 	if (context->env->local_loader == NULL) {
-		context->env->local_loader = cp_create_local_ploader(&status);
-		status = cp_register_ploader(context, context->env->local_loader);
+		context->env->local_loader = cp_create_local_loader(&status);
+		status = cp_register_loader(context, context->env->local_loader);
 	}
 	
 	return status;
 }
 
-CP_C_API cp_status_t cp_register_pcollection(cp_context_t *context, const char *dir) {
+CP_C_API cp_status_t cp_register_collection(cp_context_t *context, const char *dir) {
 	cp_status_t status = CP_OK;
 	
 	CHECK_NOT_NULL(context);
@@ -388,7 +388,7 @@ CP_C_API cp_status_t cp_register_pcollection(cp_context_t *context, const char *
 	return status;
 }
 
-CP_C_API void cp_unregister_pcollection(cp_context_t *context, const char *dir) {
+CP_C_API void cp_unregister_collection(cp_context_t *context, const char *dir) {
 	CHECK_NOT_NULL(context);
 	CHECK_NOT_NULL(dir);
 	
@@ -401,7 +401,7 @@ CP_C_API void cp_unregister_pcollection(cp_context_t *context, const char *dir) 
 	cpi_unlock_context(context);
 }
 
-CP_C_API void cp_unregister_pcollections(cp_context_t *context) {
+CP_C_API void cp_unregister_collections(cp_context_t *context) {
 	CHECK_NOT_NULL(context);
 	cpi_lock_context(context);
 	cpi_check_invocation(context, CPI_CF_ANY, __func__);
@@ -415,7 +415,7 @@ CP_C_API void cp_unregister_pcollections(cp_context_t *context) {
 
 // Plug-in loaders
 
-CP_C_API cp_status_t cp_register_ploader(cp_context_t *ctx, cp_plugin_loader_t *loader) {
+CP_C_API cp_status_t cp_register_loader(cp_context_t *ctx, cp_plugin_loader_t *loader) {
 	cp_status_t status = CP_OK;
 	hash_t *loader_plugins = NULL;
 	
@@ -454,7 +454,7 @@ CP_C_API cp_status_t cp_register_ploader(cp_context_t *ctx, cp_plugin_loader_t *
 	return status;
 }
 
-CP_C_API void cp_unregister_ploader(cp_context_t *ctx, cp_plugin_loader_t *loader) {
+CP_C_API void cp_unregister_loader(cp_context_t *ctx, cp_plugin_loader_t *loader) {
 	hnode_t *hnode;
 	
 	CHECK_NOT_NULL(ctx);
@@ -486,7 +486,7 @@ CP_C_API void cp_unregister_ploader(cp_context_t *ctx, cp_plugin_loader_t *loade
 	cpi_unlock_context(ctx);
 }
 
-CP_C_API void cp_unregister_ploaders(cp_context_t *ctx) {
+CP_C_API void cp_unregister_loaders(cp_context_t *ctx) {
 	int found;
 
 	CHECK_NOT_NULL(ctx);
@@ -503,7 +503,7 @@ CP_C_API void cp_unregister_ploaders(cp_context_t *ctx) {
 		} while (hnode != NULL && hnode_getkey(hnode) == ctx->env->local_loader);
 		if (hnode != NULL) {
 			cp_plugin_loader_t *loader = (cp_plugin_loader_t *) hnode_getkey(hnode);
-			cp_unregister_ploader(ctx, loader);
+			cp_unregister_loader(ctx, loader);
 			found = 1;
 		} else {
 			found = 0;

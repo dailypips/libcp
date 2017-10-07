@@ -548,7 +548,7 @@ CP_HIDDEN void cpi_unregister_plisteners(list_t *listeners, cp_plugin_t *plugin)
 	list_process(listeners, plugin, process_unregister_plistener);
 }
 
-CP_C_API cp_status_t cp_register_plistener(cp_context_t *context, cp_plugin_listener_func_t listener, void *user_data) {
+CP_C_API cp_status_t cp_register_listener(cp_context_t *context, cp_plugin_listener_func_t listener, void *user_data) {
 	cp_status_t status = CP_ERR_RESOURCE;
 	el_holder_t *holder;
 	lnode_t *node;
@@ -583,7 +583,7 @@ CP_C_API cp_status_t cp_register_plistener(cp_context_t *context, cp_plugin_list
 	return status;
 }
 
-CP_C_API void cp_unregister_plistener(cp_context_t *context, cp_plugin_listener_func_t listener) {
+CP_C_API void cp_unregister_listener(cp_context_t *context, cp_plugin_listener_func_t listener) {
 	el_holder_t holder;
 	lnode_t *node;
 	

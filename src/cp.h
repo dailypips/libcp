@@ -165,7 +165,7 @@ enum cp_status_s {
  * @ingroup cEnums
  * An enumeration of possible plug-in states. Plug-in states are controlled
  * by @ref cFuncsPlugin "plug-in management functions". Plug-in states can be
- * observed by @ref cp_register_plistener "registering" a
+ * observed by @ref cp_register_listener "registering" a
  * @ref cp_plugin_listener_func_t "plug-in listener function"
  * or by calling ::cp_get_plugin_state.
  *
@@ -334,10 +334,10 @@ typedef enum cp_log_severity_s cp_log_severity_t;
  * @ref cFuncsInit "Library initialization",
  * @ref cFuncsContext "plug-in context management",
  * @ref cFuncsPlugin "plug-in management",
- * listener registration (::cp_register_plistener and ::cp_unregister_plistener)
+ * listener registration (::cp_register_listener and ::cp_unregister_listener)
  * and @ref cFuncsSymbols "dynamic symbol" functions must not be called from
  * within a plug-in listener invocation. Listener functions are registered
- * using ::cp_register_plistener.
+ * using ::cp_register_listener.
  * 
  * @param plugin_id the plug-in identifier
  * @param old_state the old plug-in state
@@ -1041,83 +1041,6 @@ CP_C_API cp_context_t * cp_create_context(cp_status_t *status);
  */
 CP_C_API void cp_destroy_context(cp_context_t *ctx) CP_GCC_NONNULL(1);
 
-/**
- * Registers a local plug-in collection with a plug-in context. A local plug-in collection
- * is a directory that has plug-ins as its immediate subdirectories. The
- * plug-in context will scan the directory when ::cp_scan_plugins is called.
- * Returns @ref CP_OK if the directory has already been registered. A plug-in
- * collection can be unregistered using ::cp_unregister_pcollection or
- * ::cp_unregister_pcollections.
- *
- * This is equivalent to having registered a local plug-in loader and
- * registering a plug-in directory with it.
- *
- * @param ctx the plug-in context
- * @param dir the directory
- * @return @ref CP_OK (zero) on success or @ref CP_ERR_RESOURCE if insufficient memory
- */
-CP_C_API cp_status_t cp_register_pcollection(cp_context_t *ctx, const char *dir) CP_GCC_NONNULL(1, 2);
-
-/**
- * Unregisters a previously registered plug-in collection from a
- * plug-in context. Plug-ins already loaded from the collection are not
- * affected. Does nothing if the directory has not been registered.
- * Plug-in collections can be registered using ::cp_register_pcollection.
- * 
- * This is equivalent to having registered a local plug-in loader and
- * unregistering a plug-in directory with it.
- *
- * @param ctx the plug-in context
- * @param dir the previously registered directory
- */
-CP_C_API void cp_unregister_pcollection(cp_context_t *ctx, const char *dir) CP_GCC_NONNULL(1, 2);
-
-/**
- * Unregisters all plug-in collections from a plug-in context.
- * Plug-ins already loaded are not affected. Plug-in collections can
- * be registered using ::cp_register_pcollection.
- * 
- * This is equivalent to having registered a local plug-in loader and
- * unregistering all plug-in directories with it.
- *
- * @param ctx the plug-in context
- */
-CP_C_API void cp_unregister_pcollections(cp_context_t *ctx) CP_GCC_NONNULL(1);
-
-/**
- * Registers a plug-in loader that will be used to load plug-ins into this
- * context when ::cp_scan_plugins is called. Several plug-in loaders can be
- * registered for a context. Returns @ref CP_OK if the same loader instance
- * has already been registered with the context. A loader can be unregistered
- * using ::cp_unregister_ploader or ::cp_unregister_ploaders. An alternative
- * to explicitly registering a plug-in loader is to register a local plug-in
- * collection
- *
- * @param ctx the plug-in context
- * @param loader the plug-in loader
- * @return @ref CP_OK (zero) on success or @ref CP_ERR_RESOURCE if insufficient memory
- */
-CP_C_API cp_status_t cp_register_ploader(cp_context_t *ctx, cp_plugin_loader_t *loader) CP_GCC_NONNULL(1, 2);
-
-/**
- * Unregisters a previously registered plug-in loader from a plug-in context.
- * All plug-ins loaded by the loader are uninstalled. Does nothing if the
- * specified loader has not been registered. Plug-in loaders can be registered
- * using ::cp_register_ploader.
- *
- * @param ctx the plug-in context
- * @param loader the plug-in loader
- */
-CP_C_API void cp_unregister_ploader(cp_context_t *ctx, cp_plugin_loader_t *loader) CP_GCC_NONNULL(1, 2);
-
-/**
- * Unregisters all registered plug-in loaders from a plug-in context.
- * All plug-ins loaded by the unregistered loaders are uninstalled. Plug-in
- * loaders can be registered using ::cp_register_ploader.
- *
- * @param ctx the plug-in context
- */
-CP_C_API void cp_unregister_ploaders(cp_context_t *ctx) CP_GCC_NONNULL(1);
 
 /*@}*/
 
@@ -1187,23 +1110,6 @@ CP_C_API int cp_is_logged(cp_context_t *ctx, cp_log_severity_t severity) CP_GCC_
  */
 /*@{*/
 
-/**
- * Loads a plug-in descriptor from the specified plug-in installation
- * path and returns information about the plug-in. The plug-in descriptor
- * is validated during loading. Possible loading errors are reported via the
- * specified plug-in context. The plug-in is not installed to the context.
- * If operation fails or the descriptor
- * is invalid then NULL is returned. The caller must release the returned
- * information by calling ::cp_release_info when it does not
- * need the information anymore, typically after installing the plug-in.
- * The returned plug-in information must not be modified.
- * 
- * @param ctx the plug-in context
- * @param path the installation path of the plug-in
- * @param status a pointer to the location where status code is to be stored, or NULL
- * @return pointer to the information structure or NULL if error occurs
- */
-CP_C_API cp_plugin_info_t * cp_load_plugin_descriptor(cp_context_t *ctx, const char *path, cp_status_t *status) CP_GCC_NONNULL(1, 2);
 
 /**
  * Loads a plug-in descriptor from the specified block of memory and returns
@@ -1241,31 +1147,6 @@ CP_C_API cp_plugin_info_t * cp_load_plugin_descriptor_from_memory(cp_context_t *
  * @return @ref CP_OK (zero) on success or an error code on failure
  */
 CP_C_API cp_status_t cp_install_plugin(cp_context_t *ctx, cp_plugin_info_t *pi) CP_GCC_NONNULL(1, 2);
-
-/**
- * Scans for plug-ins in the registered plug-in directories, installing
- * new plug-ins and upgrading installed plug-ins. This function can be used to
- * initially load the plug-ins and to later rescan for new plug-ins.
- * 
- * When several versions of the same plug-in is available the most recent
- * version will be installed. The upgrade behavior depends on the specified
- * @ref cScanFlags "flags". If #CP_SP_UPGRADE is set then upgrades to installed plug-ins are
- * allowed. The old version is unloaded and the new version installed instead.
- * If #CP_SP_STOP_ALL_ON_UPGRADE is set then all active plug-ins are stopped
- * if any plug-ins are to be upgraded. If #CP_SP_STOP_ALL_ON_INSTALL is set then
- * all active plug-ins are stopped if any plug-ins are to be installed or
- * upgraded. Finally, if #CP_SP_RESTART_ACTIVE is set all currently active
- * plug-ins will be restarted after the changes (if they were stopped).
- * 
- * When removing plug-in files from the plug-in directories, the
- * plug-ins to be removed must be first unloaded. Therefore this function
- * does not check for removed plug-ins.
- * 
- * @param ctx the plug-in context
- * @param flags the bitmask of flags
- * @return @ref CP_OK (zero) on success or an error code on failure
- */
-CP_C_API cp_status_t cp_scan_plugins(cp_context_t *ctx, int flags) CP_GCC_NONNULL(1);
 
 /**
  * Starts a plug-in. Also starts any imported plug-ins. If the plug-in is
@@ -1417,7 +1298,7 @@ CP_C_API cp_plugin_state_t cp_get_plugin_state(cp_context_t *ctx, const char *id
  * Registers a plug-in listener with a plug-in context. The listener is called
  * synchronously immediately after a plug-in state change. There can be several
  * listeners registered with the same context. A plug-in listener can be
- * unregistered using ::cp_unregister_plistener and it is automatically
+ * unregistered using ::cp_unregister_listener and it is automatically
  * unregistered when the registering plug-in is stopped or when the context
  * is destroyed.
  * 
@@ -1426,7 +1307,7 @@ CP_C_API cp_plugin_state_t cp_get_plugin_state(cp_context_t *ctx, const char *id
  * @param user_data user data pointer supplied to the listener
  * @return @ref CP_OK (zero) on success or @ref CP_ERR_RESOURCE if out of resources
  */
-CP_C_API cp_status_t cp_register_plistener(cp_context_t *ctx, cp_plugin_listener_func_t listener, void *user_data) CP_GCC_NONNULL(1, 2);
+CP_C_API cp_status_t cp_register_listener(cp_context_t *ctx, cp_plugin_listener_func_t listener, void *user_data) CP_GCC_NONNULL(1, 2);
 
 /**
  * Removes a plug-in listener from a plug-in context. Does nothing if the
@@ -1435,7 +1316,7 @@ CP_C_API cp_status_t cp_register_plistener(cp_context_t *ctx, cp_plugin_listener
  * @param ctx the plug-in context
  * @param listener the plug-in listener to be removed
  */
-CP_C_API void cp_unregister_plistener(cp_context_t *ctx, cp_plugin_listener_func_t listener) CP_GCC_NONNULL(1, 2);
+CP_C_API void cp_unregister_listener(cp_context_t *ctx, cp_plugin_listener_func_t listener) CP_GCC_NONNULL(1, 2);
 
 /**
  * Traverses a configuration element tree and returns the specified element.
@@ -1469,102 +1350,6 @@ CP_C_API cp_cfg_element_t * cp_lookup_cfg_element(cp_cfg_element_t *base, const 
  * @return the value of the target element or attribute or NULL
  */
 CP_C_API char * cp_lookup_cfg_value(cp_cfg_element_t *base, const char *path) CP_GCC_PURE CP_GCC_NONNULL(1, 2);
-
-/*@}*/
-
-
-/**
- * @defgroup cFuncsPluginExec Plug-in execution
- * @ingroup cFuncs
- *
- * These functions support a plug-in controlled execution model. Started plug-ins can
- * use ::cp_run_function to register @ref cp_run_func_t "a run function" which is called when the
- * main program calls ::cp_run_plugins or ::cp_run_plugins_step. A run
- * function should do a finite chunk of work and then return telling whether
- * there is more work to be done. A run function is automatically unregistered
- * when the plug-in is stopped. Run functions make it possible for plug-ins
- * to control the flow of execution or they can be used as a coarse
- * way of task switching if there is no multi-threading support.
- *
- * The C-Pluff distribution includes a generic main program, cpluff-loader,
- * which only acts as a plug-in loader. It loads and starts up the
- * specified plug-ins, passing any additional startup arguments to them and
- * then just calls run functions of the plug-ins. This
- * makes it is possible to put all the application specific logic in
- * plug-ins. Application does not necessarily need a main program of its own.
- * 
- * It is also safe, from framework perspective, to call these functions from
- * multiple threads. Run functions may then be executed in parallel threads.
- */
-/*@{*/
-
-/**
- * Registers a new run function. The plug-in instance data pointer is given to
- * the run function as a parameter. The run function must return zero if it has
- * finished its work or non-zero if it should be called again later. The run
- * function is unregistered when it returns zero. Plug-in framework functions
- * stopping the registering plug-in must not be called from within a run
- * function. This function does nothing if the specified run
- * function is already registered for the calling plug-in instance.
- * 
- * @param ctx the plug-in context of the registering plug-in
- * @param runfunc the run function to be registered
- * @return @ref CP_OK (zero) on success or an error code on failure
- */
-CP_C_API cp_status_t cp_run_function(cp_context_t *ctx, cp_run_func_t runfunc) CP_GCC_NONNULL(1, 2);
-
-/**
- * Runs the started plug-ins as long as there is something to run.
- * This function calls repeatedly run functions registered by started plug-ins
- * until there are no more active run functions. This function is normally
- * called by a thin main proram, a loader, which loads plug-ins, starts some
- * plug-ins and then passes control over to the started plug-ins.
- * 
- * @param ctx the plug-in context containing the plug-ins
- */
-CP_C_API void cp_run_plugins(cp_context_t *ctx) CP_GCC_NONNULL(1);
-
-/**
- * Runs one registered run function. This function calls one
- * active run function registered by a started plug-in. When the run function
- * returns this function also returns and passes control back to the main
- * program. The return value can be used to determine whether there are any
- * active run functions left. This function does nothing if there are no active
- * registered run functions.
- * 
- * @param ctx the plug-in context containing the plug-ins
- * @return whether there are active run functions waiting to be run
- */
-CP_C_API int cp_run_plugins_step(cp_context_t *ctx) CP_GCC_NONNULL(1);
-
-/**
- * Sets startup arguments for the specified plug-in context. Like for usual
- * C main functions, the first argument is expected to be the name of the
- * program being executed or an empty string and the argument array should be
- * terminated by NULL entry. If the main program is
- * about to pass startup arguments to plug-ins it should call this function
- * before starting any plug-ins in the context. The arguments are not copied
- * and the caller is responsible for keeping the argument data available once
- * the arguments have been set until the context is destroyed. Plug-ins can
- * access the startup arguments using ::cp_get_context_args.
- * 
- * @param ctx the plug-in context
- * @param argv a NULL-terminated array of arguments
- */
-CP_C_API void cp_set_context_args(cp_context_t *ctx, char **argv) CP_GCC_NONNULL(1, 2);
-
-/**
- * Returns the startup arguments associated with the specified
- * plug-in context. This function is intended to be used by a plug-in runtime.
- * Startup arguments are set by the main program using ::cp_set_context_args.
- * The returned argument count is zero and the array pointer is NULL if no
- * arguments have been set.
- * 
- * @param ctx the plug-in context
- * @param argc a pointer to a location where the number of startup arguments is stored, or NULL for none
- * @return an argument array terminated by NULL or NULL if not set
- */
-CP_C_API char **cp_get_context_args(cp_context_t *ctx, int *argc) CP_GCC_NONNULL(1);
 
 /*@}*/
 
@@ -1636,8 +1421,229 @@ CP_C_API void *cp_resolve_symbol(cp_context_t *ctx, const char *id, const char *
  */
 CP_C_API void cp_release_symbol(cp_context_t *ctx, const void *ptr) CP_GCC_NONNULL(1, 2);
 
+/**
+ * CP Add API, NOT PART OF CORE API
+ */
+/**
+ * Registers a local plug-in collection with a plug-in context. A local plug-in collection
+ * is a directory that has plug-ins as its immediate subdirectories. The
+ * plug-in context will scan the directory when ::cp_scan_plugins is called.
+ * Returns @ref CP_OK if the directory has already been registered. A plug-in
+ * collection can be unregistered using ::cp_unregister_collection or
+ * ::cp_unregister_collections.
+ *
+ * This is equivalent to having registered a local plug-in loader and
+ * registering a plug-in directory with it.
+ *
+ * @param ctx the plug-in context
+ * @param dir the directory
+ * @return @ref CP_OK (zero) on success or @ref CP_ERR_RESOURCE if insufficient memory
+ */
+CP_C_API cp_status_t cp_register_collection(cp_context_t *ctx, const char *dir) CP_GCC_NONNULL(1, 2);
+
+/**
+ * Unregisters a previously registered plug-in collection from a
+ * plug-in context. Plug-ins already loaded from the collection are not
+ * affected. Does nothing if the directory has not been registered.
+ * Plug-in collections can be registered using ::cp_register_collection.
+ *
+ * This is equivalent to having registered a local plug-in loader and
+ * unregistering a plug-in directory with it.
+ *
+ * @param ctx the plug-in context
+ * @param dir the previously registered directory
+ */
+CP_C_API void cp_unregister_collection(cp_context_t *ctx, const char *dir) CP_GCC_NONNULL(1, 2);
+
+/**
+ * Unregisters all plug-in collections from a plug-in context.
+ * Plug-ins already loaded are not affected. Plug-in collections can
+ * be registered using ::cp_register_collection.
+ *
+ * This is equivalent to having registered a local plug-in loader and
+ * unregistering all plug-in directories with it.
+ *
+ * @param ctx the plug-in context
+ */
+CP_C_API void cp_unregister_collections(cp_context_t *ctx) CP_GCC_NONNULL(1);
+
+
+/**
+ * Registers a plug-in loader that will be used to load plug-ins into this
+ * context when ::cp_scan_plugins is called. Several plug-in loaders can be
+ * registered for a context. Returns @ref CP_OK if the same loader instance
+ * has already been registered with the context. A loader can be unregistered
+ * using ::cp_unregister_loader or ::cp_unregister_loaders. An alternative
+ * to explicitly registering a plug-in loader is to register a local plug-in
+ * collection
+ *
+ * @param ctx the plug-in context
+ * @param loader the plug-in loader
+ * @return @ref CP_OK (zero) on success or @ref CP_ERR_RESOURCE if insufficient memory
+ */
+CP_C_API cp_status_t cp_register_loader(cp_context_t *ctx, cp_plugin_loader_t *loader) CP_GCC_NONNULL(1, 2);
+
+/**
+ * Unregisters a previously registered plug-in loader from a plug-in context.
+ * All plug-ins loaded by the loader are uninstalled. Does nothing if the
+ * specified loader has not been registered. Plug-in loaders can be registered
+ * using ::cp_register_loader.
+ *
+ * @param ctx the plug-in context
+ * @param loader the plug-in loader
+ */
+CP_C_API void cp_unregister_loader(cp_context_t *ctx, cp_plugin_loader_t *loader) CP_GCC_NONNULL(1, 2);
+
+/**
+ * Unregisters all registered plug-in loaders from a plug-in context.
+ * All plug-ins loaded by the unregistered loaders are uninstalled. Plug-in
+ * loaders can be registered using ::cp_register_loader.
+ *
+ * @param ctx the plug-in context
+ */
+CP_C_API void cp_unregister_loaders(cp_context_t *ctx) CP_GCC_NONNULL(1);
+
+
+/**
+ * Loads a plug-in descriptor from the specified plug-in installation
+ * path and returns information about the plug-in. The plug-in descriptor
+ * is validated during loading. Possible loading errors are reported via the
+ * specified plug-in context. The plug-in is not installed to the context.
+ * If operation fails or the descriptor
+ * is invalid then NULL is returned. The caller must release the returned
+ * information by calling ::cp_release_info when it does not
+ * need the information anymore, typically after installing the plug-in.
+ * The returned plug-in information must not be modified.
+ *
+ * @param ctx the plug-in context
+ * @param path the installation path of the plug-in
+ * @param status a pointer to the location where status code is to be stored, or NULL
+ * @return pointer to the information structure or NULL if error occurs
+ */
+CP_C_API cp_plugin_info_t * cp_load_plugin_descriptor(cp_context_t *ctx, const char *path, cp_status_t *status) CP_GCC_NONNULL(1, 2);
+
+/**
+ * Scans for plug-ins in the registered plug-in directories, installing
+ * new plug-ins and upgrading installed plug-ins. This function can be used to
+ * initially load the plug-ins and to later rescan for new plug-ins.
+ *
+ * When several versions of the same plug-in is available the most recent
+ * version will be installed. The upgrade behavior depends on the specified
+ * @ref cScanFlags "flags". If #CP_SP_UPGRADE is set then upgrades to installed plug-ins are
+ * allowed. The old version is unloaded and the new version installed instead.
+ * If #CP_SP_STOP_ALL_ON_UPGRADE is set then all active plug-ins are stopped
+ * if any plug-ins are to be upgraded. If #CP_SP_STOP_ALL_ON_INSTALL is set then
+ * all active plug-ins are stopped if any plug-ins are to be installed or
+ * upgraded. Finally, if #CP_SP_RESTART_ACTIVE is set all currently active
+ * plug-ins will be restarted after the changes (if they were stopped).
+ *
+ * When removing plug-in files from the plug-in directories, the
+ * plug-ins to be removed must be first unloaded. Therefore this function
+ * does not check for removed plug-ins.
+ *
+ * @param ctx the plug-in context
+ * @param flags the bitmask of flags
+ * @return @ref CP_OK (zero) on success or an error code on failure
+ */
+CP_C_API cp_status_t cp_scan_plugins(cp_context_t *ctx, int flags) CP_GCC_NONNULL(1);
+
+
+/**
+ * @defgroup cFuncsPluginExec Plug-in execution
+ * @ingroup cFuncs
+ *
+ * These functions support a plug-in controlled execution model. Started plug-ins can
+ * use ::cp_run_function to register @ref cp_run_func_t "a run function" which is called when the
+ * main program calls ::cp_run_plugins or ::cp_run_plugins_step. A run
+ * function should do a finite chunk of work and then return telling whether
+ * there is more work to be done. A run function is automatically unregistered
+ * when the plug-in is stopped. Run functions make it possible for plug-ins
+ * to control the flow of execution or they can be used as a coarse
+ * way of task switching if there is no multi-threading support.
+ *
+ * The C-Pluff distribution includes a generic main program, cpluff-loader,
+ * which only acts as a plug-in loader. It loads and starts up the
+ * specified plug-ins, passing any additional startup arguments to them and
+ * then just calls run functions of the plug-ins. This
+ * makes it is possible to put all the application specific logic in
+ * plug-ins. Application does not necessarily need a main program of its own.
+ *
+ * It is also safe, from framework perspective, to call these functions from
+ * multiple threads. Run functions may then be executed in parallel threads.
+ */
+/*@{*/
+
+/**
+ * Registers a new run function. The plug-in instance data pointer is given to
+ * the run function as a parameter. The run function must return zero if it has
+ * finished its work or non-zero if it should be called again later. The run
+ * function is unregistered when it returns zero. Plug-in framework functions
+ * stopping the registering plug-in must not be called from within a run
+ * function. This function does nothing if the specified run
+ * function is already registered for the calling plug-in instance.
+ *
+ * @param ctx the plug-in context of the registering plug-in
+ * @param runfunc the run function to be registered
+ * @return @ref CP_OK (zero) on success or an error code on failure
+ */
+CP_C_API cp_status_t cp_run_function(cp_context_t *ctx, cp_run_func_t runfunc) CP_GCC_NONNULL(1, 2);
+
+/**
+ * Runs the started plug-ins as long as there is something to run.
+ * This function calls repeatedly run functions registered by started plug-ins
+ * until there are no more active run functions. This function is normally
+ * called by a thin main proram, a loader, which loads plug-ins, starts some
+ * plug-ins and then passes control over to the started plug-ins.
+ *
+ * @param ctx the plug-in context containing the plug-ins
+ */
+CP_C_API void cp_run_plugins(cp_context_t *ctx) CP_GCC_NONNULL(1);
+
+/**
+ * Runs one registered run function. This function calls one
+ * active run function registered by a started plug-in. When the run function
+ * returns this function also returns and passes control back to the main
+ * program. The return value can be used to determine whether there are any
+ * active run functions left. This function does nothing if there are no active
+ * registered run functions.
+ *
+ * @param ctx the plug-in context containing the plug-ins
+ * @return whether there are active run functions waiting to be run
+ */
+CP_C_API int cp_run_plugins_step(cp_context_t *ctx) CP_GCC_NONNULL(1);
+
+/**
+ * Sets startup arguments for the specified plug-in context. Like for usual
+ * C main functions, the first argument is expected to be the name of the
+ * program being executed or an empty string and the argument array should be
+ * terminated by NULL entry. If the main program is
+ * about to pass startup arguments to plug-ins it should call this function
+ * before starting any plug-ins in the context. The arguments are not copied
+ * and the caller is responsible for keeping the argument data available once
+ * the arguments have been set until the context is destroyed. Plug-ins can
+ * access the startup arguments using ::cp_get_context_args.
+ *
+ * @param ctx the plug-in context
+ * @param argv a NULL-terminated array of arguments
+ */
+CP_C_API void cp_set_context_args(cp_context_t *ctx, char **argv) CP_GCC_NONNULL(1, 2);
+
+/**
+ * Returns the startup arguments associated with the specified
+ * plug-in context. This function is intended to be used by a plug-in runtime.
+ * Startup arguments are set by the main program using ::cp_set_context_args.
+ * The returned argument count is zero and the array pointer is NULL if no
+ * arguments have been set.
+ *
+ * @param ctx the plug-in context
+ * @param argc a pointer to a location where the number of startup arguments is stored, or NULL for none
+ * @return an argument array terminated by NULL or NULL if not set
+ */
+CP_C_API char **cp_get_context_args(cp_context_t *ctx, int *argc) CP_GCC_NONNULL(1);
+
 /*@}*/
 
+/*@}*/
 
 /**
  * @defgroup cFuncsLoaders Plug-in loaders
@@ -1645,39 +1651,39 @@ CP_C_API void cp_release_symbol(cp_context_t *ctx, const void *ptr) CP_GCC_NONNU
  *
  * These functions are used to construct standard plug-in loaders. Currently
  * there is a single plug-in loader for loading plug-ins from local plug-in
- * collections. 
+ * collections.
  */
 /*@{*/
 
 /**
  * Creates and returns a new instance of a local plug-in loader. The resources
  * used by the returned instance can be released by calling
- * ::cp_destroy_local_ploader when the loader is not needed anymore.
+ * ::cp_destroy_local_loader when the loader is not needed anymore.
  * Remaining local plug-in loaders are automatically destroyed when the
  * plug-in framework is destroyed. The created plug-in loader can be
- * registered with a plug-in context using ::cp_register_ploader.
+ * registered with a plug-in context using ::cp_register_loader.
  *
  * @param status pointer to the location where status code is to be stored, or NULL
  * @return the new plug-in loader instance, or NULL on failure
  */
-CP_C_API cp_plugin_loader_t *cp_create_local_ploader(cp_status_t *status);
+CP_C_API cp_plugin_loader_t *cp_create_local_loader(cp_status_t *status);
 
 /**
  * Releases the resources allocated by a previously created local plug-in
  * loader. The specified loader must have been obtained by a call to
- * ::cp_create_local_ploader. The loader to be destroyed must not be
+ * ::cp_create_local_loader. The loader to be destroyed must not be
  * registered with any plug-in context.
  *
  * @param the plug-in loader to be destroyed
  */
-CP_C_API void cp_destroy_local_ploader(cp_plugin_loader_t *loader) CP_GCC_NONNULL(1);
+CP_C_API void cp_destroy_local_loader(cp_plugin_loader_t *loader) CP_GCC_NONNULL(1);
 
 /**
  * Registers a new directory to be scanned by the specified local
  * plug-in loader. Returns @ref CP_OK if the directory has already been
  * registered.
  *
- * @param loader the plug-in loader obtained from ::cp_create_local_ploader
+ * @param loader the plug-in loader obtained from ::cp_create_local_loader
  * @param dir the directory to register
  * @return @ref CP_OK (zero) on success or @ref CP_ERR_RESOURCE if insufficient memory
  */
@@ -1688,7 +1694,7 @@ CP_C_API cp_status_t cp_lpl_register_dir(cp_plugin_loader_t *loader, const char 
  * nothing if the specified directory has not been registered. This does not
  * affect the status of already loaded plug-ins.
  *
- * @param loader the plug-in loader obtained from ::cp_create_local_ploader
+ * @param loader the plug-in loader obtained from ::cp_create_local_loader
  * @param dir the directory to unregister
  */
 CP_C_API void cp_lpl_unregister_dir(cp_plugin_loader_t *loader, const char *dir) CP_GCC_NONNULL(1, 2);
@@ -1697,12 +1703,11 @@ CP_C_API void cp_lpl_unregister_dir(cp_plugin_loader_t *loader, const char *dir)
  * Unregisters all registered directories from the specified local plug-in
  * loader. This does not affect the status of already loaded plug-ins.
  *
- * @param loader the plug-in 
+ * @param loader the plug-in
  */
 CP_C_API void cp_lpl_unregister_dirs(cp_plugin_loader_t *loader) CP_GCC_NONNULL(1);
 
 /*@}*/
-
 
 #ifdef __cplusplus
 }
